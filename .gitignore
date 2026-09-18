@@ -1,2 +1,7 @@
-/external/
 .vs
+
+external/glad
+external/glfw
+external/imgui
+
+build
