@@ -18,7 +18,9 @@ static void GlfwErrorCallback(int error, const char *description)
 int main()
 {
 
-    runTest1();
+    // Test cases
+    runTest11();
+    runTest12();
 
     glfwSetErrorCallback(GlfwErrorCallback);
     if (!glfwInit())
