@@ -21,6 +21,8 @@ int main()
     // Test cases
     runTest11();
     runTest12();
+    runTest13();
+    runTest14();
 
     glfwSetErrorCallback(GlfwErrorCallback);
     if (!glfwInit())
