@@ -166,11 +166,45 @@ void Application::onRender()
     // and renderer are working.
 
     const Particle &particle = physicsWorld.getParticle();
+    const Particle &explicitParticle =
+        physicsWorld.getExplicitParticle();
+
+    const Particle &semiImplicitParticle =
+        physicsWorld.getSemiImplicitParticle();
 
     renderer.drawCircle(
         particle.position,
         0.25f,
         Color(1.0f, 0.8f, 0.1f));
+
+    // Spring anchor.
+    renderer.drawCircle(
+        Vec2(0.0f, 0.0f),
+        0.15f,
+        Color(1.0f, 1.0f, 1.0f));
+
+    // Explicit Euler particle.
+    renderer.drawCircle(
+        explicitParticle.position,
+        0.20f,
+        Color(1.0f, 0.2f, 0.2f));
+
+    // Semi-implicit Euler particle.
+    renderer.drawCircle(
+        semiImplicitParticle.position,
+        0.20f,
+        Color(0.2f, 1.0f, 0.2f));
+
+    // Draw springs.
+    renderer.drawLine(
+        Vec2(0.0f, 0.0f),
+        explicitParticle.position,
+        Color(1.0f, 0.2f, 0.2f));
+
+    renderer.drawLine(
+        Vec2(0.0f, 0.0f),
+        semiImplicitParticle.position,
+        Color(0.2f, 1.0f, 0.2f));
 
     renderer.drawLine(
         Vec2(-5.0f, 0.0f),

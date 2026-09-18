@@ -2,6 +2,12 @@
 
 #include "math/Vec2.h"
 
+enum class IntegrationMode
+{
+    ExplicitEuler,
+    SemiImplicitEuler
+};
+
 class Particle
 {
 public:
@@ -19,5 +25,5 @@ public:
         Vec2 velocity = Vec2(0.0f, 0.0f),
         float mass = 1.0f);
 
-    void integrate(float dt);
+    void integrate(float dt, Vec2 acceleration, IntegrationMode mode = IntegrationMode::ExplicitEuler);
 };

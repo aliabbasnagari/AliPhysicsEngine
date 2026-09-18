@@ -11,18 +11,24 @@ Particle::Particle(
 {
 }
 
-void Particle::integrate(float dt)
+void Particle::integrate(float dt, Vec2 acceleration, IntegrationMode mode)
 {
     // inverseMass == 0 means infinite mass / static particle.
     if (inverseMass == 0.0f)
         return;
 
-    constexpr Vec2 gravity(0.0f, -9.81f);
-
     // Explicit Euler:
     // Use velocity and acceleration from the START
     // of this timestep.
 
-    position += velocity * dt;
-    velocity += gravity * dt;
+    if (mode == IntegrationMode::ExplicitEuler)
+    {
+        position += velocity * dt;
+        velocity += acceleration * dt;
+    }
+    else
+    {
+        velocity += acceleration * dt;
+        position += velocity * dt;
+    }
 }
