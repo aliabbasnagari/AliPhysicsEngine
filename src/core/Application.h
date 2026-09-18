@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/Renderer.h"
+#include "physics/PhysicsWorld.h"
 
 struct GLFWwindow;
 
@@ -22,6 +23,7 @@ private:
 
     GLFWwindow *window = nullptr;
     Renderer renderer;
+    PhysicsWorld physicsWorld;
 
     int width = 1280;
     int height = 720;

@@ -157,14 +157,20 @@ int Application::run()
 
 void Application::onUpdate(float fixedDt)
 {
-    // Default: nothing to update.
-    (void)fixedDt;
+    physicsWorld.step(fixedDt);
 }
 
 void Application::onRender()
 {
     // Default rendering demonstrates that the application
     // and renderer are working.
+
+    const Particle &particle = physicsWorld.getParticle();
+
+    renderer.drawCircle(
+        particle.position,
+        0.25f,
+        Color(1.0f, 0.8f, 0.1f));
 
     renderer.drawLine(
         Vec2(-5.0f, 0.0f),
