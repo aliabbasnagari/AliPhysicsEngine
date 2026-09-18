@@ -53,6 +53,10 @@ target_link_libraries(imgui PUBLIC glfw)
 # ---------------------------------------------------------------------------
 # Engine test app
 # ---------------------------------------------------------------------------
-add_executable(AliPhysicsEngine src/main.cpp)
+add_executable(AliPhysicsEngine 
+    src/main.cpp
+    src/core/Application.cpp
+    src/graphics/Renderer.cpp
+    )
 target_include_directories(AliPhysicsEngine PRIVATE src)
 target_link_libraries(AliPhysicsEngine PRIVATE glfw glad imgui)
