@@ -1,6 +1,12 @@
 
 # AliPhysicsEngine
-Simple Physics Engine with Dear ImGui + GLFW + OpenGL
+A physics engine built from scratch, in C++, as a learning project (GLFW +
+glad + Dear ImGui for the window/rendering/debug-UI shell).
+
+This repo is deliberately a **blank baseline**. The engine itself does not
+exist yet - it's built up incrementally by working through
+[exercises/](exercises/README.md), which take you from vector math up to a
+full 2D/3D rigid body engine with joints, GJK/EPA, soft bodies and more.
 
 ## Project layout
 
@@ -11,13 +17,15 @@ src/
   math/       Vec2, Vec3, Vec4, Mat4, Quaternion
   physics/    PhysicsWorld, RigidBody
   sandbox/    Test scenes
-  main.cpp    Entry point / test app
+  main.cpp    Entry point (currently just opens a window and clears the screen)
 external/     Vendored dependencies (glfw, glad, imgui)
+exercises/    The learning curriculum - start at exercises/README.md
 ```
 
-The `src/` tree above is currently a skeleton; `src/main.cpp` is the first
-working test app, used to verify that GLFW, glad and Dear ImGui build and
-link correctly before the engine/physics code is filled in.
+Every file under `src/` besides `main.cpp` is an empty stub. `main.cpp` is
+the minimal runnable baseline: it opens a GLFW window with a glad-loaded GL
+context and clears it every frame. That's it - no game loop abstraction, no
+ImGui, no physics. You build all of that yourself in the exercises.
 
 ## Dependencies
 
@@ -69,6 +77,13 @@ on Windows).
 
 ## Running
 
-Launching the app opens a window titled "AliPhysicsEngine - Test App" with a
-Dear ImGui overlay showing frame timing and the ImGui demo window, confirming
-the GLFW/glad/ImGui pipeline is working end to end.
+Launching the app opens a blank dark-grey window - confirming the
+GLFW/glad pipeline works end to end. Nothing else happens until you start
+building on it.
+
+## Learning path
+
+Start at [exercises/README.md](exercises/README.md) for the full curriculum
+and suggested order. As you add source files while working through it,
+remember to add them to `CMakeLists.txt`'s `add_executable(AliPhysicsEngine ...)`
+call so they get built.
