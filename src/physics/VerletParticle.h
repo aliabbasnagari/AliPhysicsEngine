@@ -1,8 +1,12 @@
 #pragma once
 
 #include "math/Vec2.h"
+#include "physics/IForceReceiver.h"
 
-class VerletParticle
+// Verlet is convenient for constraint solving because constraints
+// can directly modify position; the next step automatically derives
+// the resulting velocity from the updated position history.
+class VerletParticle : public IForceReceiver
 {
 public:
     Vec2 oldPosition;
@@ -10,6 +14,8 @@ public:
 
     float mass;
     float inverseMass;
+
+    Vec2 forceAccumulator;
 
     // inverseMass == 0 means infinite mass.
     // Infinite-mass particles are static and never move.
@@ -20,7 +26,12 @@ public:
         float mass = 1.0f,
         float fixedDt = 1.0f / 60.0f);
 
-    void integrate(float dt, Vec2 acceleration);
+    void applyForce(Vec2 force) override;
+    void clearForces();
 
-    Vec2 getVelocity(float dt) const;
+    void integrate(float dt);
+
+    float getMass() const override { return mass; }
+    float getInverseMass() const override { return inverseMass; }
+    Vec2 getVelocity(float dt) const override;
 };

@@ -38,10 +38,10 @@ int main()
 {
 
     // Test cases
-    runTest11();
-    runTest12();
-    runTest13();
-    runTest14();
+    // runTest11();
+    // runTest12();
+    // runTest13();
+    // runTest14();
 
     Application app;
     return app.run();

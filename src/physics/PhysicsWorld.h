@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
+#include "physics/ForceGenerator.h"
 #include "physics/Particle.h"
 #include "physics/VerletParticle.h"
 
@@ -10,17 +14,12 @@ public:
 
     void step(float fixedDt);
 
-    const Particle &getParticle() const;
-    const Particle &getExplicitParticle() const;
     const Particle &getSemiImplicitParticle() const;
     const VerletParticle &getVerletParticle() const;
 
 private:
-    Particle particle;
-
-    Particle explicitParticle;
+    std::vector<std::unique_ptr<ForceGenerator>> forceGenerators;
     Particle semiImplicitParticle;
-
     VerletParticle verletParticle;
 
     Vec2 anchor;

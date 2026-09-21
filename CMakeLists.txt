@@ -59,6 +59,8 @@ add_executable(AliPhysicsEngine
     src/graphics/Renderer.cpp
     src/physics/Particle.cpp
     src/physics/VerletParticle.cpp
+    src/physics/GravityGenerator.cpp
+    src/physics/DragGenerator.cpp
     src/physics/PhysicsWorld.cpp
     )
 target_include_directories(AliPhysicsEngine PRIVATE src)

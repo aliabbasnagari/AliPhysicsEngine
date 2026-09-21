@@ -1,88 +1,42 @@
 #include "physics/PhysicsWorld.h"
 
+#include "physics/GravityGenerator.h"
+#include "physics/DragGenerator.h"
+
 PhysicsWorld::PhysicsWorld()
-    : particle(Vec2(0.0f, 5.0f), Vec2(0.0f, 0.0f), 1.0f),
-      explicitParticle(
+    : semiImplicitParticle(
           Vec2(3.0f, 0.0f),
-          Vec2(0.0f, 0.0f),
-          1.0f),
-      semiImplicitParticle(
-          Vec2(3.0f, 0.0f),
-          Vec2(0.0f, 0.0f),
+          Vec2(3.0f, 1.0f),
           1.0f),
       verletParticle(
-          Vec2(3.0f, 0.0f), Vec2(0.0f, 0.0f), 1.0f, 0.016f),
+          Vec2(3.0f, 0.0f), Vec2(3.0f, -1.0f), 1.0f, 0.016f),
       anchor(0.0f, 0.0f),
       restLength(2.0f),
       springConstant(10.0f)
 {
+    forceGenerators.push_back(
+        std::make_unique<DragGenerator>(0.5f));
+
+    forceGenerators.push_back(
+        std::make_unique<GravityGenerator>(Vec2(0.0f, -9.81f)));
 }
 
 void PhysicsWorld::step(float fixedDt)
 {
-    particle.integrate(fixedDt, Vec2(0.0f, -9.81f));
+    semiImplicitParticle.clearForces();
+    verletParticle.clearForces();
 
-    auto springAcceleration = [this](const Particle &particle)
+    for (const auto &generator : forceGenerators)
     {
-        Vec2 displacement = particle.position - anchor;
-
-        float length = displacement.length();
-
-        if (length <= 0.0001f)
-            return Vec2(0.0f, 0.0f);
-
-        float extension = length - restLength;
-
-        Vec2 direction = displacement / length;
-
-        Vec2 force = direction * (-springConstant * extension);
-
-        return force * particle.inverseMass;
-    };
-
-    auto springAccelerationVerletParticle = [this](const VerletParticle &particle)
-    {
-        Vec2 displacement = particle.position - anchor;
-
-        float length = displacement.length();
-
-        if (length <= 0.0001f)
-            return Vec2(0.0f, 0.0f);
-
-        float extension = length - restLength;
-
-        Vec2 direction = displacement / length;
-
-        Vec2 force = direction * (-springConstant * extension);
-
-        return force * particle.inverseMass;
-    };
-
-    Vec2 explicitAcceleration = springAcceleration(explicitParticle);
-    Vec2 semiImplicitAcceleration = springAcceleration(semiImplicitParticle);
-    Vec2 verletAcceleration = springAccelerationVerletParticle(verletParticle);
-
-    explicitParticle.integrate(
-        fixedDt,
-        explicitAcceleration,
-        IntegrationMode::ExplicitEuler);
+        generator->updateForce(semiImplicitParticle, fixedDt);
+        generator->updateForce(verletParticle, fixedDt);
+    }
 
     semiImplicitParticle.integrate(
         fixedDt,
-        semiImplicitAcceleration,
         IntegrationMode::SemiImplicitEuler);
 
-    verletParticle.integrate(fixedDt, verletAcceleration);
-}
-
-const Particle &PhysicsWorld::getParticle() const
-{
-    return particle;
-}
-
-const Particle &PhysicsWorld::getExplicitParticle() const
-{
-    return explicitParticle;
+    verletParticle.integrate(fixedDt);
 }
 
 const Particle &PhysicsWorld::getSemiImplicitParticle() const
