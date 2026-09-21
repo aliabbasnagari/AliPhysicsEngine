@@ -172,6 +172,9 @@ void Application::onRender()
     const Particle &semiImplicitParticle =
         physicsWorld.getSemiImplicitParticle();
 
+    const VerletParticle &verletParticle =
+        physicsWorld.getVerletParticle();
+
     renderer.drawCircle(
         particle.position,
         0.25f,
@@ -195,6 +198,12 @@ void Application::onRender()
         0.20f,
         Color(0.2f, 1.0f, 0.2f));
 
+    // verlet particle.
+    renderer.drawCircle(
+        verletParticle.position,
+        0.20f,
+        Color(0.3f, 8.0f, 0.1f));
+
     // Draw springs.
     renderer.drawLine(
         Vec2(0.0f, 0.0f),
@@ -207,18 +216,7 @@ void Application::onRender()
         Color(0.2f, 1.0f, 0.2f));
 
     renderer.drawLine(
-        Vec2(-5.0f, 0.0f),
-        Vec2(5.0f, 0.0f),
-        Color(1.0f, 0.0f, 0.0f));
-
-    renderer.drawCircle(
         Vec2(0.0f, 0.0f),
-        2.0f,
-        Color(0.0f, 1.0f, 0.0f));
-
-    renderer.drawBox(
-        Vec2(3.0f, 1.0f),
-        Vec2(1.0f, 0.5f),
-        0.5f,
-        Color(0.0f, 0.5f, 1.0f));
+        verletParticle.position,
+        Color(0.2f, 0.2f, 1.0f));
 }

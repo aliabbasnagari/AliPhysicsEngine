@@ -10,6 +10,8 @@ PhysicsWorld::PhysicsWorld()
           Vec2(3.0f, 0.0f),
           Vec2(0.0f, 0.0f),
           1.0f),
+      verletParticle(
+          Vec2(3.0f, 0.0f), Vec2(0.0f, 0.0f), 1.0f, 0.016f),
       anchor(0.0f, 0.0f),
       restLength(2.0f),
       springConstant(10.0f)
@@ -38,8 +40,27 @@ void PhysicsWorld::step(float fixedDt)
         return force * particle.inverseMass;
     };
 
+    auto springAccelerationVerletParticle = [this](const VerletParticle &particle)
+    {
+        Vec2 displacement = particle.position - anchor;
+
+        float length = displacement.length();
+
+        if (length <= 0.0001f)
+            return Vec2(0.0f, 0.0f);
+
+        float extension = length - restLength;
+
+        Vec2 direction = displacement / length;
+
+        Vec2 force = direction * (-springConstant * extension);
+
+        return force * particle.inverseMass;
+    };
+
     Vec2 explicitAcceleration = springAcceleration(explicitParticle);
     Vec2 semiImplicitAcceleration = springAcceleration(semiImplicitParticle);
+    Vec2 verletAcceleration = springAccelerationVerletParticle(verletParticle);
 
     explicitParticle.integrate(
         fixedDt,
@@ -50,6 +71,8 @@ void PhysicsWorld::step(float fixedDt)
         fixedDt,
         semiImplicitAcceleration,
         IntegrationMode::SemiImplicitEuler);
+
+    verletParticle.integrate(fixedDt, verletAcceleration);
 }
 
 const Particle &PhysicsWorld::getParticle() const
@@ -65,4 +88,9 @@ const Particle &PhysicsWorld::getExplicitParticle() const
 const Particle &PhysicsWorld::getSemiImplicitParticle() const
 {
     return semiImplicitParticle;
+}
+
+const VerletParticle &PhysicsWorld::getVerletParticle() const
+{
+    return verletParticle;
 }
