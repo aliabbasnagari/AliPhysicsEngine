@@ -6,8 +6,9 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
-#include <thread>
-#include <chrono>
+#include <imgui.h>
+
+#include "scenes/GravityScene.h"
 
 namespace
 {
@@ -81,13 +82,25 @@ bool Application::initialize()
         return false;
     }
 
+    registerScenes();
+
     return true;
+}
+
+void Application::registerScenes()
+{
+    scenes.push_back(std::make_unique<GravityScene>());
 }
 
 void Application::shutdown()
 {
     if (window)
     {
+        // Destroy scenes before the renderer and the GL context, in
+        // case a scene ever holds a GPU resource.
+        scenes.clear();
+        activeSceneIndex = -1;
+
         renderer.shutdown();
 
         glfwDestroyWindow(window);
@@ -95,6 +108,12 @@ void Application::shutdown()
 
         glfwTerminate();
     }
+}
+
+bool Application::hasActiveScene() const
+{
+    return activeSceneIndex >= 0 &&
+           activeSceneIndex < static_cast<int>(scenes.size());
 }
 
 int Application::run()
@@ -157,46 +176,81 @@ int Application::run()
 
 void Application::onUpdate(float fixedDt)
 {
-    physicsWorld.step(fixedDt);
+    if (hasActiveScene())
+    {
+        scenes[activeSceneIndex]->onUpdate(fixedDt);
+    }
 }
 
 void Application::onRender()
 {
-    // Default rendering demonstrates that the application
-    // and renderer are working.
+    if (!hasActiveScene())
+    {
+        renderMenu();
+        return;
+    }
 
-    const Particle &semiImplicitParticle =
-        physicsWorld.getSemiImplicitParticle();
+    Scene &active = *scenes[activeSceneIndex];
 
-    const VerletParticle &verletParticle =
-        physicsWorld.getVerletParticle();
+    active.onRender(renderer);
 
-    // Spring anchor.
-    renderer.drawCircle(
-        Vec2(0.0f, 0.0f),
-        0.15f,
-        Color(1.0f, 1.0f, 1.0f));
+    // Small always-on-top overlay so you can get back to the menu.
+    ImGui::SetNextWindowPos(ImVec2(10.0f, 10.0f), ImGuiCond_Always);
 
-    // Semi-implicit Euler particle.
-    renderer.drawCircle(
-        semiImplicitParticle.position,
-        0.20f,
-        Color(0.2f, 0.2f, 1.0f));
+    ImGui::Begin(
+        "##sceneControls",
+        nullptr,
+        ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoTitleBar |
+            ImGuiWindowFlags_AlwaysAutoResize);
 
-    // verlet particle.
-    renderer.drawCircle(
-        verletParticle.position,
-        0.20f,
-        Color(0.2f, 1.0f, 0.2f));
+    ImGui::Text("%s", active.getName());
 
-    // Draw springs.
-    renderer.drawLine(
-        Vec2(0.0f, 0.0f),
-        semiImplicitParticle.position,
-        Color(0.0f, 2.0f, 1.0f));
+    bool goBack = ImGui::Button("Back to Menu");
 
-    renderer.drawLine(
-        Vec2(0.0f, 0.0f),
-        verletParticle.position,
-        Color(0.2f, 1.0f, 0.0f));
+    ImGui::End();
+
+    // Checked outside the window so the key works regardless of
+    // which ImGui window currently has focus.
+    if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
+    {
+        goBack = true;
+    }
+
+    if (goBack)
+    {
+        active.onExit();
+        activeSceneIndex = -1;
+    }
+}
+
+void Application::renderMenu()
+{
+    ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(360.0f, 0.0f), ImGuiCond_FirstUseEver);
+
+    ImGui::Begin("AliPhysicsEngine - Scenes");
+
+    ImGui::Text("Choose a scene:");
+    ImGui::Separator();
+
+    int requested = -1;
+
+    for (int i = 0; i < static_cast<int>(scenes.size()); ++i)
+    {
+        if (ImGui::Selectable(scenes[i]->getName()))
+        {
+            requested = i;
+        }
+    }
+
+    ImGui::End();
+
+    // Deferred so onEnter runs outside the ImGui window scope.
+    if (requested >= 0)
+    {
+        scenes[requested]->onEnter();
+        activeSceneIndex = requested;
+    }
 }

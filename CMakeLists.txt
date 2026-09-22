@@ -57,6 +57,7 @@ add_executable(AliPhysicsEngine
     src/main.cpp
     src/core/Application.cpp
     src/graphics/Renderer.cpp
+    src/scenes/GravityScene.cpp
     src/physics/Particle.cpp
     src/physics/VerletParticle.cpp
     src/physics/GravityGenerator.cpp

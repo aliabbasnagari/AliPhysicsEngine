@@ -1,50 +1,77 @@
 #include "physics/PhysicsWorld.h"
 
-#include "physics/GravityGenerator.h"
-#include "physics/DragGenerator.h"
-
-PhysicsWorld::PhysicsWorld()
-    : semiImplicitParticle(
-          Vec2(3.0f, 0.0f),
-          Vec2(3.0f, 1.0f),
-          1.0f),
-      verletParticle(
-          Vec2(3.0f, 0.0f), Vec2(3.0f, -1.0f), 1.0f, 0.016f),
-      anchor(0.0f, 0.0f),
-      restLength(2.0f),
-      springConstant(10.0f)
+Particle *PhysicsWorld::createParticle(
+    const Vec2 &position,
+    const Vec2 &velocity,
+    float mass)
 {
-    forceGenerators.push_back(
-        std::make_unique<DragGenerator>(0.5f));
+    particles.push_back(
+        std::make_unique<Particle>(position, velocity, mass));
 
-    forceGenerators.push_back(
-        std::make_unique<GravityGenerator>(Vec2(0.0f, -9.81f)));
+    return particles.back().get();
+}
+
+VerletParticle *PhysicsWorld::createVerletParticle(
+    const Vec2 &position,
+    const Vec2 &velocity,
+    float mass,
+    float dt)
+{
+    verletParticles.push_back(
+        std::make_unique<VerletParticle>(
+            position, velocity, mass, dt));
+
+    return verletParticles.back().get();
+}
+
+void PhysicsWorld::addForceGenerator(
+    std::unique_ptr<ForceGenerator> generator)
+{
+    forceGenerators.push_back(std::move(generator));
 }
 
 void PhysicsWorld::step(float fixedDt)
 {
-    semiImplicitParticle.clearForces();
-    verletParticle.clearForces();
-
-    for (const auto &generator : forceGenerators)
+    for (auto &particle : particles)
     {
-        generator->updateForce(semiImplicitParticle, fixedDt);
-        generator->updateForce(verletParticle, fixedDt);
+        particle->clearForces();
     }
 
-    semiImplicitParticle.integrate(
-        fixedDt,
-        IntegrationMode::SemiImplicitEuler);
+    for (auto &particle : verletParticles)
+    {
+        particle->clearForces();
+    }
 
-    verletParticle.integrate(fixedDt);
+    // Every generator currently affects every particle.
+    for (const auto &generator : forceGenerators)
+    {
+        for (auto &particle : particles)
+        {
+            generator->updateForce(*particle, fixedDt);
+        }
+
+        for (auto &particle : verletParticles)
+        {
+            generator->updateForce(*particle, fixedDt);
+        }
+    }
+
+    for (auto &particle : particles)
+    {
+        particle->integrate(
+            fixedDt,
+            IntegrationMode::SemiImplicitEuler);
+    }
+
+    for (auto &particle : verletParticles)
+    {
+        particle->integrate(fixedDt);
+    }
 }
 
-const Particle &PhysicsWorld::getSemiImplicitParticle() const
+void PhysicsWorld::clear()
 {
-    return semiImplicitParticle;
-}
-
-const VerletParticle &PhysicsWorld::getVerletParticle() const
-{
-    return verletParticle;
+    particles.clear();
+    verletParticles.clear();
+    forceGenerators.clear();
 }

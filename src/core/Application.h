@@ -1,7 +1,10 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
+#include "core/Scene.h"
 #include "graphics/Renderer.h"
-#include "physics/PhysicsWorld.h"
 
 struct GLFWwindow;
 
@@ -9,21 +12,30 @@ class Application
 {
 public:
     Application();
-    virtual ~Application();
+    ~Application();
+
+    Application(const Application &) = delete;
+    Application &operator=(const Application &) = delete;
 
     int run();
-
-protected:
-    virtual void onUpdate(float fixedDt);
-    virtual void onRender();
 
 private:
     bool initialize();
     void shutdown();
 
+    void registerScenes();
+
+    void onUpdate(float fixedDt);
+    void onRender();
+    void renderMenu();
+
+    bool hasActiveScene() const;
+
     GLFWwindow *window = nullptr;
     Renderer renderer;
-    PhysicsWorld physicsWorld;
+
+    std::vector<std::unique_ptr<Scene>> scenes;
+    int activeSceneIndex = -1;
 
     int width = 1280;
     int height = 720;

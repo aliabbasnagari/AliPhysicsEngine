@@ -36,7 +36,7 @@ quietly dropped the live demo that tasks 3-1/3-2 depend on.
   case, epsilon `operator==`. Good header-only, `constexpr`-friendly style.
 - `Mat4`: column-major, documented (`Mat4.h:8-15`), correct multiply,
   correct `rotationZ(pi/2)` convention, `transpose()`. You correctly did
-  *not* build a general inverse — matches the task's explicit "don't build
+  _not_ build a general inverse — matches the task's explicit "don't build
   it speculatively" hint.
 - `Quaternion`: `fromAxisAngle`, Hamilton product with the composition
   order documented (`Quaternion.h:53-67`), the optimized
@@ -111,7 +111,7 @@ quietly dropped the live demo that tasks 3-1/3-2 depend on.
 ### Task 3-1 (Explicit Euler) — code is correct, not currently exercised
 
 `Particle::integrate` with `IntegrationMode::ExplicitEuler`
-(`Particle.cpp:39-45`) correctly uses the *old* velocity for the position
+(`Particle.cpp:39-45`) correctly uses the _old_ velocity for the position
 update before advancing velocity — matches the spec exactly. However,
 nothing in `PhysicsWorld` currently constructs a particle in this mode (see
 Task 3-2 note below) — the logic is right, but there's no live instance
@@ -121,7 +121,7 @@ demonstrating it anymore.
 
 `Particle::integrate`'s semi-implicit branch (`Particle.cpp:46-58`) is
 correct, and now carries the "why" comment the task explicitly asks for on
-both branches: explicit Euler advances position with the *old* velocity,
+both branches: explicit Euler advances position with the _old_ velocity,
 so an oscillating system overshoots a little further every step and the
 error compounds in one direction (energy grows unbounded); semi-implicit
 updates velocity first, so the position step already reflects this step's
