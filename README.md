@@ -1,7 +1,11 @@
-
 # AliPhysicsEngine
+
 A physics engine built from scratch, in C++, as a learning project (GLFW +
 glad + Dear ImGui for the window/rendering/debug-UI shell).
+
+# Screenshots
+
+![Screenshot 1](https://raw.githubusercontent.com/aliabbasnagari/AliPhysicsEngine/refs/heads/master/screenshots/HookeSpringScene.png)
 
 This repo is deliberately a **blank baseline**. The engine itself does not
 exist yet - it's built up incrementally by working through
