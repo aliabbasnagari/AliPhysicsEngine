@@ -14,6 +14,7 @@
 #include "scenes/DragScene.h"
 #include "scenes/ForceAccumulatorScene.h"
 #include "scenes/HookeSpringScene.h"
+#include "scenes/DistanceConstraintScene.h"
 
 namespace
 {
@@ -100,6 +101,7 @@ void Application::registerScenes()
     scenes.push_back(std::make_unique<DragScene>());
     scenes.push_back(std::make_unique<ForceAccumulatorScene>());
     scenes.push_back(std::make_unique<HookeSpringScene>());
+    scenes.push_back(std::make_unique<DistanceConstraintScene>());
 }
 
 void Application::shutdown()

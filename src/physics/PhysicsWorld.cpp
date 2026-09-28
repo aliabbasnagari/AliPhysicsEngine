@@ -40,6 +40,18 @@ void PhysicsWorld::clearSprings()
     springs.clear();
 }
 
+DistanceConstraint *PhysicsWorld::addConstraint(
+    std::unique_ptr<DistanceConstraint> constraint)
+{
+    constraints.push_back(std::move(constraint));
+    return constraints.back().get();
+}
+
+void PhysicsWorld::clearConstraints()
+{
+    constraints.clear();
+}
+
 void PhysicsWorld::step(float fixedDt)
 {
     // 1. Clear.
@@ -80,6 +92,11 @@ void PhysicsWorld::step(float fixedDt)
     {
         particle->integrate(fixedDt);
     }
+
+    for (const auto &constraint : constraints)
+    {
+        constraint->solve();
+    }
 }
 
 void PhysicsWorld::clear()
@@ -88,4 +105,5 @@ void PhysicsWorld::clear()
     verletParticles.clear();
     forceGenerators.clear();
     springs.clear();
+    constraints.clear();
 }

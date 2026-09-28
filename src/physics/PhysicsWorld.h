@@ -5,6 +5,7 @@
 
 #include "physics/ForceGenerator.h"
 #include "physics/SpringForceGenerator.h"
+#include "physics/DistanceConstraint.h"
 #include "physics/Particle.h"
 #include "physics/VerletParticle.h"
 
@@ -38,6 +39,10 @@ public:
     SpringForceGenerator *addSpring(std::unique_ptr<SpringForceGenerator> spring);
     void clearSprings();
 
+    DistanceConstraint *addConstraint(
+        std::unique_ptr<DistanceConstraint> constraint);
+    void clearConstraints();
+
     void step(float fixedDt);
     void clear();
 
@@ -57,4 +62,5 @@ private:
     std::vector<std::unique_ptr<VerletParticle>> verletParticles;
     std::vector<std::unique_ptr<ForceGenerator>> forceGenerators;
     std::vector<std::unique_ptr<SpringForceGenerator>> springs;
+    std::vector<std::unique_ptr<DistanceConstraint>> constraints;
 };
