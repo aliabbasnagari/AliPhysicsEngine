@@ -5,8 +5,8 @@ VerletParticle::VerletParticle(
     Vec2 velocity,
     float mass,
     float fixedDt)
-    : position(position),
-      oldPosition(position - velocity * fixedDt),
+    : oldPosition(position - velocity * fixedDt),
+      position(position),
       mass(mass),
       inverseMass(mass > 0.0f ? 1.0f / mass : 0.0f),
       forceAccumulator(0.0f, 0.0f)
@@ -25,20 +25,33 @@ void VerletParticle::clearForces()
 
 void VerletParticle::integrate(float dt)
 {
-    // inverseMass == 0 means infinite mass / static particle.
+    // Infinite-mass particles are static.
     if (inverseMass == 0.0f)
+    {
+        clearForces();
         return;
+    }
+
+    if (dt <= 0.0f)
+    {
+        clearForces();
+        return;
+    }
 
     Vec2 acceleration =
         forceAccumulator * inverseMass;
 
+    // Save the current position before advancing.
     Vec2 currentPosition = position;
 
-    position = 2.0f * position - oldPosition + acceleration * (dt * dt);
+    // Verlet integration:
+    //
+    // x(t + dt) = 2x(t) - x(t - dt) + a * dt^2
+    position =
+        2.0f * position - oldPosition + acceleration * (dt * dt);
 
+    // Move the position history forward.
     oldPosition = currentPosition;
-
-    clearForces();
 }
 
 Vec2 VerletParticle::getVelocity(float dt) const
@@ -46,5 +59,8 @@ Vec2 VerletParticle::getVelocity(float dt) const
     if (dt <= 0.0f)
         return Vec2(0.0f, 0.0f);
 
+    // Velocity is reconstructed from position history.
+    //
+    // v ~= (x(t) - x(t - dt)) / dt
     return (position - oldPosition) / dt;
 }

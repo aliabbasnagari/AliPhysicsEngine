@@ -60,7 +60,4 @@ void Particle::integrate(
         velocity += acceleration * dt;
         position += velocity * dt;
     }
-
-    // Forces are only valid for this timestep.
-    clearForces();
 }

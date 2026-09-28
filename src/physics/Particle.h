@@ -34,6 +34,16 @@ public:
     float getMass() const override { return mass; }
     float getInverseMass() const override { return inverseMass; }
     Vec2 getVelocity(float /*dt*/) const override { return velocity; }
+    Vec2 getPosition(float /*dt*/) const override { return position; }
 
-    void integrate(float dt, IntegrationMode mode = IntegrationMode::ExplicitEuler);
+    // Uses this particle's own stored mode.
+    void integrate(float dt) { integrate(dt, integrationMode); }
+
+    void integrate(float dt, IntegrationMode mode);
+
+    void setIntegrationMode(IntegrationMode mode) { integrationMode = mode; }
+    IntegrationMode getIntegrationMode() const { return integrationMode; }
+
+private:
+    IntegrationMode integrationMode = IntegrationMode::SemiImplicitEuler;
 };

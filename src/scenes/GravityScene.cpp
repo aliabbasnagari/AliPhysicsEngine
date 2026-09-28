@@ -13,9 +13,9 @@ void GravityScene::onEnter()
     world.addForceGenerator(
         std::make_unique<GravityGenerator>(Vec2(0.0f, -9.81f)));
 
-    world.createParticle(Vec2(-1.0f, 3.0f), Vec2(1.0f, 0.0f), 1.0f);
-    world.createParticle(Vec2(0.0f, 3.0f), Vec2(0.0f, 0.0f), 2.0f);
-    world.createParticle(Vec2(1.0f, 3.0f), Vec2(-1.0f, 0.0f), 0.5f);
+    world.createParticle(Vec2(-1.0f, 3.0f), Vec2(1.0f, 0.0f), 1.0f, IntegrationMode::ExplicitEuler);
+    world.createParticle(Vec2(0.0f, 3.0f), Vec2(0.0f, 0.0f), 2.0f, IntegrationMode::ExplicitEuler);
+    world.createParticle(Vec2(1.0f, 3.0f), Vec2(-1.0f, 0.0f), 0.5f, IntegrationMode::ExplicitEuler);
 }
 
 void GravityScene::onUpdate(float fixedDt)

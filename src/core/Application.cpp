@@ -9,6 +9,11 @@
 #include <imgui.h>
 
 #include "scenes/GravityScene.h"
+#include "scenes/EulerComparisonScene.h"
+#include "scenes/VerletComparisonScene.h"
+#include "scenes/DragScene.h"
+#include "scenes/ForceAccumulatorScene.h"
+#include "scenes/HookeSpringScene.h"
 
 namespace
 {
@@ -90,6 +95,11 @@ bool Application::initialize()
 void Application::registerScenes()
 {
     scenes.push_back(std::make_unique<GravityScene>());
+    scenes.push_back(std::make_unique<EulerComparisonScene>());
+    scenes.push_back(std::make_unique<VerletComparisonScene>());
+    scenes.push_back(std::make_unique<DragScene>());
+    scenes.push_back(std::make_unique<ForceAccumulatorScene>());
+    scenes.push_back(std::make_unique<HookeSpringScene>());
 }
 
 void Application::shutdown()

@@ -4,7 +4,7 @@
 #include "physics/IForceReceiver.h"
 
 // Verlet is convenient for constraint solving because constraints
-// can directly modify position; the next step automatically derives
+// can directly modify position. The next step automatically derives
 // the resulting velocity from the updated position history.
 class VerletParticle : public IForceReceiver
 {
@@ -33,5 +33,11 @@ public:
 
     float getMass() const override { return mass; }
     float getInverseMass() const override { return inverseMass; }
+
     Vec2 getVelocity(float dt) const override;
+
+    Vec2 getPosition(float /*dt*/) const override
+    {
+        return position;
+    }
 };

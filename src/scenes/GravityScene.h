@@ -6,7 +6,7 @@
 class GravityScene : public Scene
 {
 public:
-    const char *getName() const override { return "Gravity"; }
+    const char *getName() const override { return "Gravity - Explicit Euler"; }
 
     void onEnter() override;
 

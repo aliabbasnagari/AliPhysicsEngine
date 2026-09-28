@@ -58,11 +58,19 @@ add_executable(AliPhysicsEngine
     src/core/Application.cpp
     src/graphics/Renderer.cpp
     src/scenes/GravityScene.cpp
+    src/scenes/EulerComparisonScene.cpp
+    src/scenes/VerletComparisonScene.cpp
     src/physics/Particle.cpp
     src/physics/VerletParticle.cpp
     src/physics/GravityGenerator.cpp
     src/physics/DragGenerator.cpp
+    src/physics/AnchoredSpringGenerator.cpp
     src/physics/PhysicsWorld.cpp
+    src/scenes/DragScene.cpp
+    src/physics/WindGenerator.cpp
+    src/scenes/ForceAccumulatorScene.cpp
+    src/physics/SpringForceGenerator.cpp
+    src/scenes/HookeSpringScene.cpp
     )
 target_include_directories(AliPhysicsEngine PRIVATE src)
 target_link_libraries(AliPhysicsEngine PRIVATE glfw glad imgui)

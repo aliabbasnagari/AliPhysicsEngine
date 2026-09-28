@@ -117,14 +117,6 @@ struct Vec3
         return *this / len;
     }
 
-    // Rotate 90 degrees counter-clockwise
-    //
-    // (x, y) -> (-y, x)
-    constexpr Vec3 perp() const
-    {
-        return Vec3(-y, x, z);
-    }
-
     // Epsilon-based equality
     bool operator==(const Vec3 &other) const
     {

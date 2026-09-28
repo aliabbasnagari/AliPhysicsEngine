@@ -11,4 +11,5 @@ public:
     virtual float getMass() const = 0;
     virtual float getInverseMass() const = 0;
     virtual Vec2 getVelocity(float dt) const = 0;
+    virtual Vec2 getPosition(float dt) const = 0;
 };
