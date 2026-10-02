@@ -43,6 +43,10 @@ public:
         std::unique_ptr<DistanceConstraint> constraint);
     void clearConstraints();
 
+    VerletDistanceConstraint *addVerletConstraint(
+        std::unique_ptr<VerletDistanceConstraint> constraint);
+    void clearVerletConstraints();
+
     void step(float fixedDt);
     void clear();
 

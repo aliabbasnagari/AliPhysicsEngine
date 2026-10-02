@@ -62,7 +62,6 @@ add_executable(AliPhysicsEngine
     src/scenes/VerletComparisonScene.cpp
     src/physics/Particle.cpp
     src/physics/VerletParticle.cpp
-    src/physics/DistanceConstraint.cpp
     src/physics/GravityGenerator.cpp
     src/physics/DragGenerator.cpp
     src/physics/AnchoredSpringGenerator.cpp
