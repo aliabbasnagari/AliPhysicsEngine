@@ -47,6 +47,13 @@ public:
         std::unique_ptr<VerletDistanceConstraint> constraint);
     void clearVerletConstraints();
 
+    void setConstraintIterations(int iterations)
+    {
+        constraintIterations = iterations;
+    }
+
+    int getConstraintIterations() const { return constraintIterations; }
+
     void step(float fixedDt);
     void clear();
 
@@ -67,4 +74,7 @@ private:
     std::vector<std::unique_ptr<ForceGenerator>> forceGenerators;
     std::vector<std::unique_ptr<SpringForceGenerator>> springs;
     std::vector<std::unique_ptr<DistanceConstraint>> constraints;
+    std::vector<std::unique_ptr<VerletDistanceConstraint>> verletConstraints;
+
+    int constraintIterations = 1;
 };

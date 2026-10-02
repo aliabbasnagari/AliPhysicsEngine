@@ -72,6 +72,7 @@ add_executable(AliPhysicsEngine
     src/physics/SpringForceGenerator.cpp
     src/scenes/HookeSpringScene.cpp
     src/scenes/DistanceConstraintScene.cpp
+    src/scenes/RopeScene.cpp
     )
 target_include_directories(AliPhysicsEngine PRIVATE src)
 target_link_libraries(AliPhysicsEngine PRIVATE glfw glad imgui)

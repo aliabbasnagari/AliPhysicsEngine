@@ -52,6 +52,18 @@ void PhysicsWorld::clearConstraints()
     constraints.clear();
 }
 
+VerletDistanceConstraint *PhysicsWorld::addVerletConstraint(
+    std::unique_ptr<VerletDistanceConstraint> constraint)
+{
+    verletConstraints.push_back(std::move(constraint));
+    return verletConstraints.back().get();
+}
+
+void PhysicsWorld::clearVerletConstraints()
+{
+    verletConstraints.clear();
+}
+
 void PhysicsWorld::step(float fixedDt)
 {
     // 1. Clear.
@@ -93,9 +105,16 @@ void PhysicsWorld::step(float fixedDt)
         particle->integrate(fixedDt);
     }
 
-    for (const auto &constraint : constraints)
+    for (int iteration = 0; iteration < constraintIterations; ++iteration)
     {
-        constraint->solve();
+        for (const auto &constraint : constraints)
+        {
+            constraint->solve();
+        }
+        for (const auto &constraint : verletConstraints)
+        {
+            constraint->solve();
+        }
     }
 }
 
@@ -106,4 +125,5 @@ void PhysicsWorld::clear()
     forceGenerators.clear();
     springs.clear();
     constraints.clear();
+    verletConstraints.clear();
 }
