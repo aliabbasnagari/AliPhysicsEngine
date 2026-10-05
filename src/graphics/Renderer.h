@@ -57,6 +57,9 @@ public:
         float angleRadians,
         Color color);
 
+    // Inverse of the mapping used by drawLine/drawCircle.
+    Vec2 screenToWorld(Vec2 screenPx) const;
+
 private:
     float worldToPixels = 50.0f;
 };

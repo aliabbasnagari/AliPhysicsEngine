@@ -145,3 +145,17 @@ void Renderer::drawBox(
     drawLine(corners[2], corners[3], color);
     drawLine(corners[3], corners[0], color);
 }
+
+Vec2 Renderer::screenToWorld(Vec2 screenPx) const
+{
+    const ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+
+    // Exact inverse of the forward mapping in drawLine/drawCircle:
+    //   screen.x = displayW * 0.5 + world.x * worldToPixels
+    //   screen.y = displayH * 0.5 - world.y * worldToPixels
+    // ImGui mouse positions are in the same coordinate space as
+    // DisplaySize, so this stays correct on hi-DPI displays.
+    return Vec2(
+        (screenPx.x - displaySize.x * 0.5f) / worldToPixels,
+        (displaySize.y * 0.5f - screenPx.y) / worldToPixels);
+}

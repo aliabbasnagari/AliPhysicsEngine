@@ -16,6 +16,7 @@
 #include "scenes/HookeSpringScene.h"
 #include "scenes/DistanceConstraintScene.h"
 #include "scenes/RopeScene.h"
+#include "scenes/ClothScene.h"
 
 namespace
 {
@@ -104,6 +105,7 @@ void Application::registerScenes()
     scenes.push_back(std::make_unique<HookeSpringScene>());
     scenes.push_back(std::make_unique<DistanceConstraintScene>());
     scenes.push_back(std::make_unique<RopeScene>());
+    scenes.push_back(std::make_unique<ClothScene>());
 }
 
 void Application::shutdown()
