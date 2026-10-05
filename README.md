@@ -5,6 +5,8 @@ glad + Dear ImGui for the window/rendering/debug-UI shell).
 
 # Screenshots
 
+![DEMO](https://raw.githubusercontent.com/aliabbasnagari/AliPhysicsEngine/refs/heads/master/screenshots/demo.gif)
+
 ![Screenshot 1](https://raw.githubusercontent.com/aliabbasnagari/AliPhysicsEngine/refs/heads/master/screenshots/HookeSpringScene.png)
 
 This repo is deliberately a **blank baseline**. The engine itself does not
