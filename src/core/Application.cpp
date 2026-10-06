@@ -17,6 +17,7 @@
 #include "scenes/DistanceConstraintScene.h"
 #include "scenes/RopeScene.h"
 #include "scenes/ClothScene.h"
+#include "scenes/RigidBodyScene.h"
 
 namespace
 {
@@ -106,6 +107,7 @@ void Application::registerScenes()
     scenes.push_back(std::make_unique<DistanceConstraintScene>());
     scenes.push_back(std::make_unique<RopeScene>());
     scenes.push_back(std::make_unique<ClothScene>());
+    scenes.push_back(std::make_unique<RigidBodyScene>());
 }
 
 void Application::shutdown()
