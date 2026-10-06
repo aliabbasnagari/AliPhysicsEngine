@@ -54,3 +54,50 @@ RigidBody RigidBody::createBox(
     body.halfExtents = halfExtents;
     return body;
 }
+
+void RigidBody::applyForce(Vec2 force)
+{
+    forceAccumulator += force;
+}
+void RigidBody::applyForceAtPoint(Vec2 force, Vec2 worldPoint)
+{
+    // Apply the force to the linear accumulator.
+    applyForce(force);
+
+    // Compute the torque: r x F, where r is the vector from the center of mass
+    // to the point of application.
+    const Vec2 r = worldPoint - position;
+    const float torque = r.cross(force);
+    applyTorque(torque);
+}
+void RigidBody::applyTorque(float torque)
+{
+
+    torqueAccumulator += torque;
+}
+void RigidBody::clearForces()
+{
+    forceAccumulator = Vec2(0.0f, 0.0f);
+    torqueAccumulator = 0.0f;
+}
+void RigidBody::integrate(float dt)
+{
+
+    if (isStatic())
+    {
+        return;
+    }
+
+    // Update linear velocity and position.
+    const Vec2 acceleration = forceAccumulator * inverseMass;
+    linearVelocity += acceleration * dt;
+    position += linearVelocity * dt;
+
+    // Update angular velocity and rotation.
+    const float angularAcceleration = torqueAccumulator * inverseInertia;
+    angularVelocity += angularAcceleration * dt;
+    rotation += angularVelocity * dt;
+
+    // Clear the accumulators for the next step.
+    clearForces();
+}

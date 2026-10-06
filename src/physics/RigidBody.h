@@ -43,6 +43,9 @@ public:
     float radius = 0.0f; // Circle only
     Vec2 halfExtents;    // Box only
 
+    Vec2 forceAccumulator;
+    float torqueAccumulator = 0.0f;
+
     // Inertia is computed from mass and shape (uniform density, about the
     // centre of mass). mass <= 0 makes the body static: zero inverse mass
     // and zero inverse inertia.
@@ -57,6 +60,12 @@ public:
     }
 
     Transform getTransform() const { return Transform{position, rotation}; }
+
+    void applyForce(Vec2 force);
+    void applyForceAtPoint(Vec2 force, Vec2 worldPoint);
+    void applyTorque(float torque);
+    void clearForces();
+    void integrate(float dt);
 
 private:
     RigidBody(Vec2 position, ShapeType shapeType, float mass, float inertia);

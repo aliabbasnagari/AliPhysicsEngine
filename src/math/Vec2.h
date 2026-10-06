@@ -78,6 +78,12 @@ struct Vec2
         return x * other.x + y * other.y;
     }
 
+    // Cross
+    constexpr float cross(const Vec2 &other) const
+    {
+        return x * other.y - y * other.x;
+    }
+
     // Squared length
     constexpr float lengthSquared() const
     {

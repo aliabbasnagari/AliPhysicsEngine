@@ -35,6 +35,8 @@ void RigidBodyScene::onEnter()
     rigidBodies[3].rotation = 0.5f;
     rigidBodies[4].rotation = 0.5f;
 
+    rigidBodies[0].applyForceAtPoint(Vec2(10.0f, 0.0f), rigidBodies[0].position + Vec2(0.0f, half.y));
+
     // Round-trip sanity check: local -> world -> local must return the input.
     const Transform t = rigidBodies[2].getTransform();
     const Vec2 p(0.3f, -0.2f);
@@ -73,5 +75,13 @@ void RigidBodyScene::onRender(Renderer &renderer)
             body.position,
             t.localToWorld(Vec2(0.0f, AXIS_LENGTH)),
             Color(0.2f, 1.0f, 0.2f));
+    }
+}
+
+void RigidBodyScene::onUpdate(float fixedDt)
+{
+    for (RigidBody &body : rigidBodies)
+    {
+        body.integrate(fixedDt);
     }
 }
