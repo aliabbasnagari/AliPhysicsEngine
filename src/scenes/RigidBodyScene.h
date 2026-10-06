@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdio>
 #include <vector>
 
 #include "core/Scene.h"

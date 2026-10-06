@@ -1,5 +1,7 @@
 #include "scenes/RigidBodyScene.h"
 
+#include <cstdio>
+
 #include "graphics/Renderer.h"
 
 namespace
@@ -15,14 +17,17 @@ void RigidBodyScene::onEnter()
 
     const Vec2 half(0.6f, 0.3f);
 
-    // Inertia values are placeholders until Task 5-2 computes them.
-    rigidBodies.push_back(RigidBody::createBox(Vec2(-4.0f, 1.0f), half, 1.0f, 1.0f));
-    rigidBodies.push_back(RigidBody::createBox(Vec2(-2.0f, 1.0f), half, 1.0f, 1.0f));
-    rigidBodies.push_back(RigidBody::createBox(Vec2(0.0f, 1.0f), half, 1.0f, 1.0f));
-    rigidBodies.push_back(RigidBody::createCircle(Vec2(2.0f, 1.0f), 0.5f, 1.0f, 1.0f));
+    rigidBodies.push_back(RigidBody::createBox(Vec2(-4.0f, 1.0f), half, 1.0f));
+    rigidBodies.push_back(RigidBody::createBox(Vec2(-2.0f, 1.0f), half, 1.0f));
+    rigidBodies.push_back(RigidBody::createBox(Vec2(0.0f, 1.0f), half, 1.0f));
+    rigidBodies.push_back(RigidBody::createCircle(Vec2(2.0f, 1.0f), 0.5f, 1.0f));
 
-    // Static: mass and inertia of 0.
-    rigidBodies.push_back(RigidBody::createBox(Vec2(4.0f, 1.0f), half, 0.0f, 0.0f));
+    // Static: mass 0 gives zero inverse mass and inverse inertia.
+    rigidBodies.push_back(RigidBody::createBox(Vec2(4.0f, 1.0f), half, 0.0f));
+
+    // Equal mass, radius doubled: inertia should be 4x (for Task 5-3).
+    rigidBodies.push_back(RigidBody::createCircle(Vec2(-3.0f, -2.0f), 0.5f, 1.0f));
+    rigidBodies.push_back(RigidBody::createCircle(Vec2(-1.0f, -2.0f), 1.0f, 1.0f));
 
     rigidBodies[0].rotation = 0.0f;
     rigidBodies[1].rotation = 0.5f;
@@ -34,7 +39,6 @@ void RigidBodyScene::onEnter()
     const Transform t = rigidBodies[2].getTransform();
     const Vec2 p(0.3f, -0.2f);
     const Vec2 back = t.worldToLocal(t.localToWorld(p));
-    printf("round trip: (%f, %f) -> (%f, %f)\n", p.x, p.y, back.x, back.y);
 }
 
 void RigidBodyScene::onRender(Renderer &renderer)

@@ -43,11 +43,13 @@ public:
     float radius = 0.0f; // Circle only
     Vec2 halfExtents;    // Box only
 
-    // mass <= 0 or inertia <= 0 gives a zero inverse (infinite).
+    // Inertia is computed from mass and shape (uniform density, about the
+    // centre of mass). mass <= 0 makes the body static: zero inverse mass
+    // and zero inverse inertia.
     static RigidBody createCircle(
-        Vec2 position, float radius, float mass, float inertia);
+        Vec2 position, float radius, float mass);
     static RigidBody createBox(
-        Vec2 position, Vec2 halfExtents, float mass, float inertia);
+        Vec2 position, Vec2 halfExtents, float mass);
 
     bool isStatic() const
     {

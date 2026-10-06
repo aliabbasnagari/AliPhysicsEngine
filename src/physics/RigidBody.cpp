@@ -34,16 +34,22 @@ RigidBody::RigidBody(
 }
 
 RigidBody RigidBody::createCircle(
-    Vec2 position, float radius, float mass, float inertia)
+    Vec2 position, float radius, float mass)
 {
+    // Static (mass <= 0) bodies get zero inertia automatically.
+    const float inertia = mass > 0.0f ? 0.5f * mass * radius * radius : 0.0f;
     RigidBody body(position, ShapeType::Circle, mass, inertia);
     body.radius = radius;
     return body;
 }
 
 RigidBody RigidBody::createBox(
-    Vec2 position, Vec2 halfExtents, float mass, float inertia)
+    Vec2 position, Vec2 halfExtents, float mass)
 {
+    // The formula uses full width/height, not half-extents.
+    const float w = 2.0f * halfExtents.x;
+    const float h = 2.0f * halfExtents.y;
+    const float inertia = mass > 0.0f ? (1.0f / 12.0f) * mass * (w * w + h * h) : 0.0f;
     RigidBody body(position, ShapeType::Box, mass, inertia);
     body.halfExtents = halfExtents;
     return body;
