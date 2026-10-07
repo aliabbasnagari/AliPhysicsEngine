@@ -85,6 +85,8 @@ void RigidBody::integrate(float dt)
 
     if (isStatic())
     {
+        // Discard anything applied so it can't pile up.
+        clearForces();
         return;
     }
 
