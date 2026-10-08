@@ -8,6 +8,7 @@
 #include "physics/DistanceConstraint.h"
 #include "physics/Particle.h"
 #include "physics/VerletParticle.h"
+#include "physics/RigidBody.h"
 
 class PhysicsWorld
 {
@@ -23,6 +24,9 @@ public:
         const Vec2 &velocity,
         float mass,
         float dt);
+
+    RigidBody *addRigidBody(RigidBody body);
+    void removeRigidBody(RigidBody *body);
 
     // Returns a non-owning pointer to the generator just registered,
     // so a caller (e.g. a debug UI) can keep tuning it afterward
@@ -62,15 +66,20 @@ public:
         return particles;
     }
 
-    const std::vector<std::unique_ptr<VerletParticle>> &
-    getVerletParticles() const
+    const std::vector<std::unique_ptr<VerletParticle>> &getVerletParticles() const
     {
         return verletParticles;
+    }
+
+    const std::vector<std::unique_ptr<RigidBody>> &getBodies() const
+    {
+        return rigidBodies;
     }
 
 private:
     std::vector<std::unique_ptr<Particle>> particles;
     std::vector<std::unique_ptr<VerletParticle>> verletParticles;
+    std::vector<std::unique_ptr<RigidBody>> rigidBodies;
     std::vector<std::unique_ptr<ForceGenerator>> forceGenerators;
     std::vector<std::unique_ptr<SpringForceGenerator>> springs;
     std::vector<std::unique_ptr<DistanceConstraint>> constraints;

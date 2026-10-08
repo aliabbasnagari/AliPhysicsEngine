@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Vec2.h"
+#include "physics/IForceReceiver.h"
 
 // Conventions
 // - Rotation: radians, positive = counter-clockwise on screen
@@ -26,7 +27,7 @@ struct Transform
     Vec2 worldToLocal(Vec2 world) const;
 };
 
-class RigidBody
+class RigidBody : public IForceReceiver
 {
 public:
     Vec2 position;
@@ -61,11 +62,16 @@ public:
 
     Transform getTransform() const { return Transform{position, rotation}; }
 
-    void applyForce(Vec2 force);
+    void applyForce(Vec2 force) override;
     void applyForceAtPoint(Vec2 force, Vec2 worldPoint);
     void applyTorque(float torque);
     void clearForces();
     void integrate(float dt);
+
+    float getMass() const override { return mass; }
+    float getInverseMass() const override { return inverseMass; }
+    Vec2 getVelocity(float /*dt*/) const override { return linearVelocity; }
+    Vec2 getPosition(float /*dt*/) const override { return position; }
 
 private:
     RigidBody(Vec2 position, ShapeType shapeType, float mass, float inertia);

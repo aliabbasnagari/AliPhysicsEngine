@@ -76,6 +76,7 @@ add_executable(AliPhysicsEngine
     src/scenes/RopeScene.cpp
     src/scenes/ClothScene.cpp
     src/scenes/RigidBodyScene.cpp
+    src/scenes/FallingBodiesScene.cpp
     )
 target_include_directories(AliPhysicsEngine PRIVATE src)
 target_link_libraries(AliPhysicsEngine PRIVATE glfw glad imgui)

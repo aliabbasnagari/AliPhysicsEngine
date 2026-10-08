@@ -3,7 +3,16 @@
 #include <vector>
 
 #include "core/Scene.h"
-#include "physics/RigidBody.h"
+#include "physics/PhysicsWorld.h"
+
+// A constant load re-applied to one body every step.
+struct BodyLoad
+{
+    RigidBody *body;  // non-owning; the world owns it
+    Vec2 force;       // world-space force
+    Vec2 localPoint;  // application point in body space
+    float torque;
+};
 
 class RigidBodyScene : public Scene
 {
@@ -15,18 +24,9 @@ public:
     void onRender(Renderer &renderer) override;
 
 private:
-    // A constant load re-applied to one body every step.
-    struct Push
-    {
-        size_t body;
-        Vec2 force;       // world-space force
-        Vec2 localPoint;  // application point in body space
-        float torque;
-    };
+    void addTest(RigidBody body, Vec2 force, Vec2 localPoint, float torque);
 
-    void addTest(const RigidBody &body, Vec2 force, Vec2 localPoint, float torque);
-
-    std::vector<RigidBody> rigidBodies;
-    std::vector<Push> pushes;
+    PhysicsWorld world;
+    std::vector<BodyLoad> loads;
     float elapsed = 0.0f;
 };

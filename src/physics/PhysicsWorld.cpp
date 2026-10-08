@@ -1,5 +1,7 @@
 #include "physics/PhysicsWorld.h"
 
+#include <algorithm>
+
 Particle *PhysicsWorld::createParticle(const Vec2 &position, const Vec2 &velocity, float mass, IntegrationMode mode)
 {
     particles.push_back(
@@ -14,6 +16,24 @@ VerletParticle *PhysicsWorld::createVerletParticle(
     verletParticles.push_back(
         std::make_unique<VerletParticle>(position, velocity, mass, dt));
     return verletParticles.back().get();
+}
+
+RigidBody *PhysicsWorld::addRigidBody(RigidBody body)
+{
+    rigidBodies.push_back(std::make_unique<RigidBody>(std::move(body)));
+    return rigidBodies.back().get();
+}
+
+// Invalidates `body`; callers must drop their own copy of the pointer.
+// An unknown pointer is ignored. Do not call during step().
+void PhysicsWorld::removeRigidBody(RigidBody *body)
+{
+    rigidBodies.erase(
+        std::remove_if(
+            rigidBodies.begin(), rigidBodies.end(),
+            [body](const std::unique_ptr<RigidBody> &owned)
+            { return owned.get() == body; }),
+        rigidBodies.end());
 }
 
 ForceGenerator *PhysicsWorld::addForceGenerator(
@@ -75,6 +95,10 @@ void PhysicsWorld::step(float fixedDt)
     {
         particle->clearForces();
     }
+    for (auto &body : rigidBodies)
+    {
+        body->clearForces();
+    }
 
     // 2a. Single-receiver generators.
     for (const auto &generator : forceGenerators)
@@ -86,6 +110,10 @@ void PhysicsWorld::step(float fixedDt)
         for (auto &particle : verletParticles)
         {
             generator->updateForce(*particle, fixedDt);
+        }
+        for (auto &body : rigidBodies)
+        {
+            generator->updateForce(*body, fixedDt);
         }
     }
 
@@ -103,6 +131,10 @@ void PhysicsWorld::step(float fixedDt)
     for (auto &particle : verletParticles)
     {
         particle->integrate(fixedDt);
+    }
+    for (auto &body : rigidBodies)
+    {
+        body->integrate(fixedDt);
     }
 
     for (int iteration = 0; iteration < constraintIterations; ++iteration)
@@ -122,8 +154,9 @@ void PhysicsWorld::clear()
 {
     particles.clear();
     verletParticles.clear();
+    rigidBodies.clear();
     forceGenerators.clear();
     springs.clear();
     constraints.clear();
     verletConstraints.clear();
-}
+}
