@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Vec2.h"
+#include "physics/AABB.h"
 #include "physics/IForceReceiver.h"
 
 // Conventions
@@ -9,6 +10,7 @@
 // - Static: inverseMass == 0 && inverseInertia == 0. A static body
 //   never responds to forces or torques. Use isStatic() instead of
 //   re-checking the inverses at call sites.
+// - rotation is wrapped into [-pi, pi] by integrate().
 // - Units: world units, kg, radians, radians/sec.
 
 enum class ShapeType
@@ -47,6 +49,8 @@ public:
     Vec2 forceAccumulator;
     float torqueAccumulator = 0.0f;
 
+    AABB computeAABB() const;
+
     // Inertia is computed from mass and shape (uniform density, about the
     // centre of mass). mass <= 0 makes the body static: zero inverse mass
     // and zero inverse inertia.
@@ -54,6 +58,13 @@ public:
         Vec2 position, float radius, float mass);
     static RigidBody createBox(
         Vec2 position, Vec2 halfExtents, float mass);
+
+    // Explicit inertia, for when the uniform-density formula isn't wanted.
+    // Static rules still apply: mass <= 0 forces inertia to 0.
+    static RigidBody createCircle(
+        Vec2 position, float radius, float mass, float inertia);
+    static RigidBody createBox(
+        Vec2 position, Vec2 halfExtents, float mass, float inertia);
 
     bool isStatic() const
     {

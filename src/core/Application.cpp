@@ -19,6 +19,7 @@
 #include "scenes/ClothScene.h"
 #include "scenes/RigidBodyScene.h"
 #include "scenes/FallingBodiesScene.h"
+#include "scenes/AABBScene.h"
 
 namespace
 {
@@ -110,6 +111,7 @@ void Application::registerScenes()
     scenes.push_back(std::make_unique<ClothScene>());
     scenes.push_back(std::make_unique<RigidBodyScene>());
     scenes.push_back(std::make_unique<FallingBodiesScene>());
+    scenes.push_back(std::make_unique<AABBScene>());
 }
 
 void Application::shutdown()

@@ -1,5 +1,6 @@
 #include "physics/RigidBody.h"
 
+#include <algorithm>
 #include <cmath>
 
 Vec2 Transform::localToWorld(Vec2 local) const
@@ -33,12 +34,48 @@ RigidBody::RigidBody(
 {
 }
 
+AABB RigidBody::computeAABB() const
+{
+    if (shapeType == ShapeType::Circle)
+    {
+        const Vec2 extent(radius, radius);
+        return AABB{position - extent, position + extent};
+    }
+
+    // Box: a rotated box's AABB is built from its rotated corners, not
+    // from the unrotated half-extents.
+    const Transform t = getTransform();
+    const Vec2 corners[4] = {
+        t.localToWorld(Vec2(-halfExtents.x, -halfExtents.y)),
+        t.localToWorld(Vec2(halfExtents.x, -halfExtents.y)),
+        t.localToWorld(Vec2(halfExtents.x, halfExtents.y)),
+        t.localToWorld(Vec2(-halfExtents.x, halfExtents.y)),
+    };
+
+    // Seed from the first corner, not zero, so bodies far from the
+    // origin are handled correctly.
+    AABB box{corners[0], corners[0]};
+    for (int i = 1; i < 4; ++i)
+    {
+        box.min.x = std::min(box.min.x, corners[i].x);
+        box.min.y = std::min(box.min.y, corners[i].y);
+        box.max.x = std::max(box.max.x, corners[i].x);
+        box.max.y = std::max(box.max.y, corners[i].y);
+    }
+    return box;
+}
+
 RigidBody RigidBody::createCircle(
     Vec2 position, float radius, float mass)
 {
+    return createCircle(position, radius, mass, 0.5f * mass * radius * radius);
+}
+
+RigidBody RigidBody::createCircle(
+    Vec2 position, float radius, float mass, float inertia)
+{
     // Static (mass <= 0) bodies get zero inertia automatically.
-    const float inertia = mass > 0.0f ? 0.5f * mass * radius * radius : 0.0f;
-    RigidBody body(position, ShapeType::Circle, mass, inertia);
+    RigidBody body(position, ShapeType::Circle, mass, mass > 0.0f ? inertia : 0.0f);
     body.radius = radius;
     return body;
 }
@@ -49,8 +86,13 @@ RigidBody RigidBody::createBox(
     // The formula uses full width/height, not half-extents.
     const float w = 2.0f * halfExtents.x;
     const float h = 2.0f * halfExtents.y;
-    const float inertia = mass > 0.0f ? (1.0f / 12.0f) * mass * (w * w + h * h) : 0.0f;
-    RigidBody body(position, ShapeType::Box, mass, inertia);
+    return createBox(position, halfExtents, mass, (1.0f / 12.0f) * mass * (w * w + h * h));
+}
+
+RigidBody RigidBody::createBox(
+    Vec2 position, Vec2 halfExtents, float mass, float inertia)
+{
+    RigidBody body(position, ShapeType::Box, mass, mass > 0.0f ? inertia : 0.0f);
     body.halfExtents = halfExtents;
     return body;
 }
@@ -99,6 +141,11 @@ void RigidBody::integrate(float dt)
     const float angularAcceleration = torqueAccumulator * inverseInertia;
     angularVelocity += angularAcceleration * dt;
     rotation += angularVelocity * dt;
+    constexpr float PI = 3.14159265358979f;
+    if (rotation > PI || rotation < -PI)
+    {
+        rotation = std::remainder(rotation, 2.0f * PI);
+    }
 
     // Clear the accumulators for the next step.
     clearForces();

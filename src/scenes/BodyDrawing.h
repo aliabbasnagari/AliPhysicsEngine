@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/Renderer.h"
+#include "physics/AABB.h"
 #include "physics/RigidBody.h"
 
 // Shared by the rigid body scenes. Draws the shape plus its local axes
@@ -32,4 +33,16 @@ inline void drawBody(Renderer &renderer, const RigidBody &body)
     renderer.drawLine(
         body.position, t.localToWorld(Vec2(0.0f, axisLength)),
         Color(0.2f, 1.0f, 0.2f));
+}
+
+// Outline of an axis-aligned box. Built from lines because drawBox is
+// centre/half-extents/angle based.
+inline void drawAABB(Renderer &renderer, const AABB &box, Color color)
+{
+    const Vec2 bottomRight(box.max.x, box.min.y);
+    const Vec2 topLeft(box.min.x, box.max.y);
+    renderer.drawLine(box.min, bottomRight, color);
+    renderer.drawLine(bottomRight, box.max, color);
+    renderer.drawLine(box.max, topLeft, color);
+    renderer.drawLine(topLeft, box.min, color);
 }
