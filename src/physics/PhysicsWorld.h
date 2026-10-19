@@ -9,6 +9,7 @@
 #include "physics/Particle.h"
 #include "physics/VerletParticle.h"
 #include "physics/RigidBody.h"
+#include "physics/BroadPhase.h"
 
 class PhysicsWorld
 {
@@ -58,6 +59,8 @@ public:
 
     int getConstraintIterations() const { return constraintIterations; }
 
+    const std::vector<BodyPair> &getCandidatePairs() const { return candidatePairs; }
+
     void step(float fixedDt);
     void clear();
 
@@ -84,6 +87,8 @@ private:
     std::vector<std::unique_ptr<SpringForceGenerator>> springs;
     std::vector<std::unique_ptr<DistanceConstraint>> constraints;
     std::vector<std::unique_ptr<VerletDistanceConstraint>> verletConstraints;
+
+    std::vector<BodyPair> candidatePairs;
 
     int constraintIterations = 1;
 };

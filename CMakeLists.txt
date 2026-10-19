@@ -67,6 +67,7 @@ add_executable(AliPhysicsEngine
     src/physics/AnchoredSpringGenerator.cpp
     src/physics/PhysicsWorld.cpp
     src/physics/RigidBody.cpp
+    src/physics/BroadPhase.cpp
     src/scenes/DragScene.cpp
     src/physics/WindGenerator.cpp
     src/scenes/ForceAccumulatorScene.cpp
@@ -78,6 +79,7 @@ add_executable(AliPhysicsEngine
     src/scenes/RigidBodyScene.cpp
     src/scenes/FallingBodiesScene.cpp
     src/scenes/AABBScene.cpp
+    src/scenes/BroadPhaseScene.cpp
     )
 target_include_directories(AliPhysicsEngine PRIVATE src)
 target_link_libraries(AliPhysicsEngine PRIVATE glfw glad imgui)

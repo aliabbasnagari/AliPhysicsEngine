@@ -148,6 +148,8 @@ void PhysicsWorld::step(float fixedDt)
             constraint->solve();
         }
     }
+
+    candidatePairs = findPairsBruteForce(rigidBodies);
 }
 
 void PhysicsWorld::clear()
@@ -159,4 +161,5 @@ void PhysicsWorld::clear()
     springs.clear();
     constraints.clear();
     verletConstraints.clear();
-}
+    candidatePairs.clear();
+}
