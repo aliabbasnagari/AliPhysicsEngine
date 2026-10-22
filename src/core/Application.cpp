@@ -21,6 +21,7 @@
 #include "scenes/FallingBodiesScene.h"
 #include "scenes/AABBScene.h"
 #include "scenes/BroadPhaseScene.h"
+#include "scenes/BroadPhaseComparisonScene.h"
 
 namespace
 {
@@ -114,6 +115,7 @@ void Application::registerScenes()
     scenes.push_back(std::make_unique<FallingBodiesScene>());
     scenes.push_back(std::make_unique<AABBScene>());
     scenes.push_back(std::make_unique<BroadPhaseScene>());
+    scenes.push_back(std::make_unique<BroadPhaseComparisonScene>());
 }
 
 void Application::shutdown()

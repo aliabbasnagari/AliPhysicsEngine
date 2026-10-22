@@ -28,6 +28,13 @@ RigidBody *PhysicsWorld::addRigidBody(RigidBody body)
 // An unknown pointer is ignored. Do not call during step().
 void PhysicsWorld::removeRigidBody(RigidBody *body)
 {
+    candidatePairs.erase(
+        std::remove_if(
+            candidatePairs.begin(), candidatePairs.end(),
+            [body](const BodyPair &pair)
+            { return pair.a == body || pair.b == body; }),
+        candidatePairs.end());
+
     rigidBodies.erase(
         std::remove_if(
             rigidBodies.begin(), rigidBodies.end(),
