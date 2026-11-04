@@ -1,16 +1,18 @@
 #include "scenes/AABBScene.h"
 
+#include <imgui.h>
+
 #include "graphics/Renderer.h"
 #include "scenes/BodyDrawing.h"
 
 namespace
 {
     constexpr float PI = 3.14159265358979f;
+}
 
-    void checkOverlap(const char *label, const AABB &a, const AABB &b, bool expected)
-    {
-        const bool actual = a.overlaps(b);
-    }
+void AABBScene::checkOverlap(const char *label, const AABB &a, const AABB &b, bool expected)
+{
+    overlapChecks.push_back({label, expected, a.overlaps(b)});
 }
 
 void AABBScene::onEnter()
@@ -19,6 +21,7 @@ void AABBScene::onEnter()
     world.clear();
     boxes.clear();
     circlePairs.clear();
+    overlapChecks.clear();
 
     // No gravity: this scene is only about the bounds.
     const Vec2 half(1.0f, 0.5f);
@@ -62,8 +65,8 @@ void AABBScene::onEnter()
     RigidBody flat = RigidBody::createBox(Vec2(0.0f, 0.0f), half, 1.0f);
     RigidBody turned = RigidBody::createBox(Vec2(0.0f, 0.0f), half, 1.0f);
     turned.rotation = PI / 4.0f;
-    const Vec2 s0 = flat.computeAABB().size();
-    const Vec2 s45 = turned.computeAABB().size();
+    flatSize = flat.computeAABB().size();
+    turnedSize = turned.computeAABB().size();
 }
 
 void AABBScene::onUpdate(float fixedDt)
@@ -92,4 +95,31 @@ void AABBScene::onRender(Renderer &renderer)
         drawAABB(renderer, a, color);
         drawAABB(renderer, b, color);
     }
+
+    int passed = 0;
+    for (const OverlapCheck &check : overlapChecks)
+    {
+        passed += (check.actual == check.expected) ? 1 : 0;
+    }
+    const bool allPassed = passed == static_cast<int>(overlapChecks.size());
+
+    ImGui::Begin("AABB Checks");
+    ImGui::TextColored(
+        allPassed ? ImVec4(0.3f, 1.0f, 0.3f, 1.0f) : ImVec4(1.0f, 0.3f, 0.3f, 1.0f),
+        "%d/%d overlap cases pass", passed, static_cast<int>(overlapChecks.size()));
+    for (const OverlapCheck &check : overlapChecks)
+    {
+        ImGui::Text("%s %s: expected %s, got %s",
+                    check.actual == check.expected ? "[ok]  " : "[FAIL]",
+                    check.label.c_str(),
+                    check.expected ? "overlap" : "no overlap",
+                    check.actual ? "overlap" : "no overlap");
+    }
+
+    ImGui::Separator();
+    ImGui::Text("Box AABB size at 0 deg:  %.3f x %.3f", flatSize.x, flatSize.y);
+    ImGui::Text("Box AABB size at 45 deg: %.3f x %.3f", turnedSize.x, turnedSize.y);
+    ImGui::Text("45 deg larger than 0 deg: %s",
+                (turnedSize.x > flatSize.x && turnedSize.y > flatSize.y) ? "yes" : "NO");
+    ImGui::End();
 }

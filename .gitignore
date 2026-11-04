@@ -5,3 +5,5 @@ external/glfw
 external/imgui
 
 build
+
+imgui.ini
