@@ -1,6 +1,10 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "graphics/Renderer.h"
+#include "physics/BroadPhase.h"
 #include "physics/AABB.h"
 #include "physics/RigidBody.h"
 
@@ -45,4 +49,21 @@ inline void drawAABB(Renderer &renderer, const AABB &box, Color color)
     renderer.drawLine(bottomRight, box.max, color);
     renderer.drawLine(box.max, topLeft, color);
     renderer.drawLine(topLeft, box.min, color);
+}
+
+// Draws every grid cell occupied by at least one body's AABB.
+inline void drawSpatialGrid(
+    Renderer &renderer,
+    const std::vector<std::unique_ptr<RigidBody>> &bodies,
+    float cellSize,
+    Color color)
+{
+    const Vec2 halfExtents(cellSize * 0.5f, cellSize * 0.5f);
+    for (const IntVec2 &cell : findOccupiedCells(bodies, cellSize))
+    {
+        const Vec2 center(
+            (cell.x + 0.5f) * cellSize,
+            (cell.y + 0.5f) * cellSize);
+        renderer.drawBox(center, halfExtents, 0.0f, color);
+    }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <unordered_map>
+#include <cstddef>
+#include <cstdint>
 
 struct IntVec2
 {
@@ -12,10 +13,14 @@ struct IntVec2
     }
 };
 
+// Spatial hash (large-prime multiply + xor). Unsigned arithmetic so
+// negative cell coordinates wrap instead of overflowing signed ints.
 struct IntVec2Hash
 {
     size_t operator()(const IntVec2 &v) const
     {
-        return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
+        const uint32_t hx = static_cast<uint32_t>(v.x) * 73856093u;
+        const uint32_t hy = static_cast<uint32_t>(v.y) * 19349663u;
+        return static_cast<size_t>(hx ^ hy);
     }
 };
