@@ -12,9 +12,12 @@
 #include "core/Application.h"
 
 #include "tests/exercise1.cpp"
+#include "tests/collisionTests.cpp"
 
 int main()
 {
+    runCollisionTests();
+
     Application app;
     return app.run();
 }

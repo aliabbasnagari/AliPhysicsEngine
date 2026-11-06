@@ -68,6 +68,7 @@ add_executable(AliPhysicsEngine
     src/physics/PhysicsWorld.cpp
     src/physics/RigidBody.cpp
     src/physics/BroadPhase.cpp
+    src/physics/Collision.cpp
     src/scenes/DragScene.cpp
     src/physics/WindGenerator.cpp
     src/scenes/ForceAccumulatorScene.cpp
